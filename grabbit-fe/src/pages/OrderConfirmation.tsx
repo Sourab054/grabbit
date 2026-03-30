@@ -14,8 +14,6 @@ const OrderConfirmation = () => {
     return orderDate.toLocaleDateString();
   };
 
-  console.log(checkout, "CHECKOUIT");
-
   useEffect(() => {
     if (checkout && checkout._id) {
       dispatch(clearCart());

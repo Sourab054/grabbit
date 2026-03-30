@@ -46,7 +46,6 @@ const UserManagement = () => {
 
   const handleRoleChange = (userId: string, newRole: string) => {
     // Update user's role in the database or perform other actions
-    console.log(userId, newRole);
     dispatch(updateUser({ id: userId, role: newRole }));
   };
 
