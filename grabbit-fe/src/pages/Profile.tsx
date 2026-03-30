@@ -4,6 +4,7 @@ import type { AppDispatch, RootState } from "../redux/store";
 import { logout } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 const Profile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,6 +17,7 @@ const Profile = () => {
 
   const handleLogout = () => {
     dispatch(logout());
+    toast.success("Logged out successfully");
     navigate("/login");
   };
 

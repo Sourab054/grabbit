@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import register from "../assets/register.webp";
-import { registerUser } from "../redux/slices/authSlice";
+import { registerUser, clearError } from "../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../redux/store";
 import { mergeCart } from "../redux/slices/cartSlice";
+import { toast } from "sonner";
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const { user, guestId, loading } = useSelector(
+  const { user, guestId, loading, error } = useSelector(
     (state: RootState) => state.auth,
   );
   const { cart } = useSelector((state: RootState) => state.cart);
@@ -34,9 +35,19 @@ const Register = () => {
     }
   }, [user, guestId, cart, dispatch, isCheckoutRedirect, navigate]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(registerUser({ name, email, password }));
+    const resultAction = await dispatch(registerUser({ name, email, password }));
+    if (registerUser.fulfilled.match(resultAction)) {
+      toast.success("Welcome to the squad! Registration successful.");
+    }
   };
 
   return (

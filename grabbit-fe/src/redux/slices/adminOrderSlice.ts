@@ -55,16 +55,23 @@ export const updateOrderStatus = createAsyncThunk(
 // delete an order
 export const deleteOrder = createAsyncThunk(
   "adminOrders/deleteOrder",
-  async (id: string) => {
-    await axios.delete(
-      `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
         },
-      },
-    );
-    return id;
+      );
+      return id;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data as ErrorResponse);
+      }
+      return rejectWithValue({ message: "An unknown error occurred" });
+    }
   },
 );
 
@@ -79,7 +86,11 @@ const initialState: AdminOrderState = {
 const adminOrderSlice = createSlice({
   name: "adminOrders",
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchAllOrders.pending, (state) => {
       state.loading = true;
@@ -133,8 +144,10 @@ const adminOrderSlice = createSlice({
     builder.addCase(deleteOrder.rejected, (state, action) => {
       state.loading = false;
       state.error =
-        (action.error as ErrorResponse)?.message || "Failed to delete order";
+        (action.payload as ErrorResponse)?.message || "Failed to delete order";
     });
   },
 });
+
+export const { clearError } = adminOrderSlice.actions;
 export default adminOrderSlice.reducer;

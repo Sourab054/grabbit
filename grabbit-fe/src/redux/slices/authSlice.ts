@@ -87,6 +87,9 @@ const authSlice = createSlice({
       state.guestId = `guest_${new Date().getTime()}`; // Generate a new guest ID with the current timestamp as part of the ID.
       localStorage.setItem("guestId", state.guestId); // Set the new guest ID in localStorage.
     },
+    clearError: (state) => {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loginUser.pending, (state) => {
@@ -97,9 +100,13 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.loading = false;
     });
-    builder.addCase(loginUser.rejected, (state) => {
-      state.error = null;
+    builder.addCase(loginUser.rejected, (state, action) => {
       state.loading = false;
+      state.error =
+        (typeof action.payload === "string"
+          ? action.payload
+          : (action.payload as { message?: string })?.message) ??
+        "An unexpected error occurred";
     });
     builder.addCase(registerUser.pending, (state) => {
       state.loading = true;
@@ -108,12 +115,16 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.loading = false;
     });
-    builder.addCase(registerUser.rejected, (state) => {
-      state.error = null;
+    builder.addCase(registerUser.rejected, (state, action) => {
       state.loading = false;
+      state.error =
+        (typeof action.payload === "string"
+          ? action.payload
+          : (action.payload as { message?: string })?.message) ??
+        "An unexpected error occurred";
     });
   },
 });
 
-export const { logout, generateNewGuestId } = authSlice.actions;
+export const { logout, generateNewGuestId, clearError } = authSlice.actions;
 export default authSlice.reducer;

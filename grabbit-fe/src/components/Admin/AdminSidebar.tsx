@@ -22,65 +22,64 @@ const AdminSidebar = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <Link to="/admin" className="text-2xl font-medium">
+    <div className="p-8 h-full flex flex-col bg-winterella-black text-white">
+      <div className="mb-12">
+        <Link to="/admin" className="text-4xl font-oswald uppercase tracking-tighter hover:text-winterella-red transition-colors">
           Grabbit
         </Link>
+        <p className="text-xs text-gray-400 mt-2 tracking-widest uppercase">Admin Dashboard</p>
       </div>
 
-      <h2 className="text-xl font-medium mb-6 text-center">Admin Dashboard</h2>
-
-      <nav className="flex flex-col space-y-2">
+      <nav className="flex flex-col space-y-4 grow">
         <NavLink
           to="/admin/users"
           className={({ isActive }) =>
             isActive
-              ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
-              : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded flex items-center space-x-2"
+              ? "text-winterella-yellow font-oswald uppercase text-xl tracking-wider flex items-center space-x-3 py-2 border-b-2 border-winterella-yellow"
+              : "text-white font-oswald uppercase text-xl tracking-wider flex items-center space-x-3 py-2 border-b-2 border-transparent hover:text-winterella-red transition-all"
           }
         >
-          <FaUser />
-          <span>Users </span>
+          <FaUser size={18} />
+          <span>Users</span>
         </NavLink>
         <NavLink
           to="/admin/products"
           className={({ isActive }) =>
             isActive
-              ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
-              : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded flex items-center space-x-2"
+              ? "text-winterella-yellow font-oswald uppercase text-xl tracking-wider flex items-center space-x-3 py-2 border-b-2 border-winterella-yellow"
+              : "text-white font-oswald uppercase text-xl tracking-wider flex items-center space-x-3 py-2 border-b-2 border-transparent hover:text-winterella-red transition-all"
           }
         >
-          <FaBoxOpen />
-          <span>Products </span>
+          <FaBoxOpen size={18} />
+          <span>Products</span>
         </NavLink>
         <NavLink
           to="/admin/orders"
           className={({ isActive }) =>
             isActive
-              ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
-              : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded flex items-center space-x-2"
+              ? "text-winterella-yellow font-oswald uppercase text-xl tracking-wider flex items-center space-x-3 py-2 border-b-2 border-winterella-yellow"
+              : "text-white font-oswald uppercase text-xl tracking-wider flex items-center space-x-3 py-2 border-b-2 border-transparent hover:text-winterella-red transition-all"
           }
         >
-          <FaClipboardList />
-          <span>Orders </span>
+          <FaClipboardList size={18} />
+          <span>Orders</span>
         </NavLink>
         <NavLink
           to="/"
           className={({ isActive }) =>
             isActive
-              ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
-              : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded flex items-center space-x-2"
+              ? "text-winterella-yellow font-oswald uppercase text-xl tracking-wider flex items-center space-x-3 py-2 mt-8"
+              : "text-white font-oswald uppercase text-xl tracking-wider flex items-center space-x-3 py-2 mt-8 hover:text-winterella-red transition-all"
           }
         >
-          <FaStore />
-          <span>Shop </span>
+          <FaStore size={18} />
+          <span>Shop</span>
         </NavLink>
       </nav>
-      <div className="mt-6">
+      <div className="mt-12">
         <button
           onClick={handleLogout}
-          className="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded flex items-center justify-center space-x-2"
+          className="w-full bg-winterella-red text-white py-4 font-oswald uppercase tracking-widest hover:bg-white hover:text-black transition-all border-2 border-winterella-red flex items-center justify-center space-x-2"
         >
           <FaSignOutAlt />
           <span>Logout</span>

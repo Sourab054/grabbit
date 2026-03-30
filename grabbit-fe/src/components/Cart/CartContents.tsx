@@ -6,6 +6,7 @@ import {
   updateProductQuantityInCart,
 } from "../../redux/slices/cartSlice";
 import type { AppDispatch } from "../../redux/store";
+import { toast } from "sonner";
 
 const CartContents = ({
   cart,
@@ -38,6 +39,10 @@ const CartContents = ({
           color,
         }),
       );
+      toast.success("Quantity updated", {
+        duration: 1500,
+        id: `cart-${productId}-${size}-${color}`,
+      });
     }
   };
 
@@ -55,6 +60,7 @@ const CartContents = ({
         color,
       }),
     );
+    toast.success("Item removed from cart");
   };
 
   return (

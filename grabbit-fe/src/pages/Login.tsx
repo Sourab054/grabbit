@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import login from "../assets/login.webp";
-import { useDispatch } from "react-redux";
-import { loginUser } from "../redux/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser, clearError } from "../redux/slices/authSlice";
 import type { AppDispatch } from "../redux/store";
-import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { mergeCart } from "../redux/slices/cartSlice";
+import { toast } from "sonner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { user, guestId, loading } = useSelector(
+  const { user, guestId, loading, error } = useSelector(
     (state: RootState) => state.auth,
   );
   const { cart } = useSelector((state: RootState) => state.cart);
@@ -35,9 +35,19 @@ const Login = () => {
     }
   }, [user, guestId, cart, dispatch, isCheckoutRedirect, navigate]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(loginUser({ email, password }));
+    const resultAction = await dispatch(loginUser({ email, password }));
+    if (loginUser.fulfilled.match(resultAction)) {
+      toast.success("Welcome back! Login successful.");
+    }
   };
 
   return (

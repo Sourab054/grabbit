@@ -21,47 +21,71 @@ export const fetchAdminProducts = createAsyncThunk(
 // async thunk function to create a new product
 export const createProduct = createAsyncThunk(
   "adminProducts/createProduct",
-  async (productData) => {
-    const response = await axios.post(
-      `${API_URL}/api/admin/products`,
-      productData,
-      {
-        headers: {
-          Authorization: USER_TOKEN,
+  async (productData: Partial<Product>, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/api/admin/products`,
+        productData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
         },
-      },
-    );
-    return response.data;
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
   },
 );
 
 // async thunk function to update a product
 export const updateProduct = createAsyncThunk(
   "adminProducts/updateProduct",
-  async ({ id, productData }: { id: string; productData: unknown }) => {
-    const response = await axios.put(
-      `${API_URL}/api/products/${id}`,
-      productData,
-      {
-        headers: {
-          Authorization: USER_TOKEN,
+  async (
+    { id, productData }: { id: string; productData: unknown },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await axios.put(
+        `${API_URL}/api/products/${id}`,
+        productData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
         },
-      },
-    );
-    return response.data;
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
   },
 );
 
 // async thunk function to delete a product
 export const deleteProduct = createAsyncThunk(
   "adminProducts/deleteProduct",
-  async (id: string) => {
-    await axios.delete(`${API_URL}/api/products/${id}`, {
-      headers: {
-        Authorization: USER_TOKEN,
-      },
-    });
-    return id;
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await axios.delete(`${API_URL}/api/products/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
+      });
+      return id;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
   },
 );
 
@@ -74,7 +98,11 @@ const initialState: AdminProductState = {
 const adminProductSlice = createSlice({
   name: "adminProducts",
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchAdminProducts.pending, (state) => {
       state.loading = true;
@@ -151,4 +179,5 @@ const adminProductSlice = createSlice({
   },
 });
 
+export const { clearError } = adminProductSlice.actions;
 export default adminProductSlice.reducer;

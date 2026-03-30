@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../redux/store";
 import { createCheckout } from "../../redux/slices/checkoutSlice";
 import axios from "axios";
+import { toast } from "sonner";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -39,39 +40,53 @@ const Checkout = () => {
         totalPrice: cart.totalPrice,
       }),
     );
-    // Create checkout and set checkoutId
-    if (createCheckout.fulfilled.match(res)) setCheckoutId(res.payload._id);
+    if (createCheckout.fulfilled.match(res)) {
+      setCheckoutId(res.payload._id);
+      toast.success("Shipping address and order details confirmed.");
+    } else {
+      toast.error("Failed to create checkout. Please try again.");
+    }
   };
 
   const handlePaymentSuccess = async (details: PayPalOrderDetails) => {
-    // Handle payment success logic here
-    await axios.put(
-      `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/pay`,
-      {
-        paymentDetails: details,
-        paymentStatus: "paid",
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/pay`,
+        {
+          paymentDetails: details,
+          paymentStatus: "paid",
         },
-      },
-    );
-    await handleFinalizeCheckout(checkoutId);
-    navigate("/order-confirmation");
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        },
+      );
+      toast.success("Payment successful!");
+      await handleFinalizeCheckout(checkoutId);
+    } catch (error) {
+      console.error("Payment update failed:", error);
+      toast.error("Payment failed! Please try again.");
+    }
   };
 
   const handleFinalizeCheckout = async (checkoutId: string | null) => {
-    await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/finalize`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/finalize`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
         },
-      },
-    );
-    navigate("/order-confirmation");
+      );
+      toast.success("Order confirmed!");
+      navigate("/order-confirmation");
+    } catch (error) {
+      console.error("Order finalization failed:", error);
+      toast.error("Failed to finalize order. Please contact support.");
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -255,7 +270,7 @@ const Checkout = () => {
                     <PayPalButton
                       amount={cart.totalPrice.toString()}
                       onSuccess={handlePaymentSuccess}
-                      onError={() => alert("Payment failed! Please try again.")}
+                      onError={() => toast.error("Payment failed! Please try again.")}
                     />
                   </div>
                 )}

@@ -3,16 +3,23 @@ import axios from "axios";
 import type { AdminState, User } from "../../types";
 
 // Fetch all users (admin only)
-export const fetchUsers = createAsyncThunk("admin/fetchUsers", async () => {
-  const response = await axios.get(
-    `${import.meta.env.VITE_BACKEND_URL}/api/admin/users`,
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+export const fetchUsers = createAsyncThunk("admin/fetchUsers", async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URL}/api/admin/users`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
       },
-    },
-  );
-  return response.data;
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return rejectWithValue(error.response.data);
+    }
+    return rejectWithValue("An unexpected error occurred");
+  }
 });
 
 // Add the create user action
@@ -42,43 +49,60 @@ export const addUser = createAsyncThunk(
 // Update user action (admin only)
 export const updateUser = createAsyncThunk(
   "admin/updateUser",
-  async ({
-    id,
-    name,
-    email,
-    role,
-  }: {
-    id: string;
-    name?: string;
-    email?: string;
-    role?: string;
-  }) => {
-    const response = await axios.put(
-      `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`,
-      { name, email, role },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+  async (
+    {
+      id,
+      name,
+      email,
+      role,
+    }: {
+      id: string;
+      name?: string;
+      email?: string;
+      role?: string;
+    },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`,
+        { name, email, role },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
         },
-      },
-    );
-    return response.data;
+      );
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
   },
 );
 
 // Delete a user
 export const deleteUser = createAsyncThunk(
   "admin/deleteUser",
-  async (id: string) => {
-    await axios.delete(
-      `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
         },
-      },
-    );
-    return id;
+      );
+      return id;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue("An unexpected error occurred");
+    }
   },
 );
 
@@ -89,7 +113,11 @@ const adminSlice = createSlice({
     loading: false,
     error: null as string | null,
   } as AdminState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchUsers.pending, (state) => {
       state.loading = true;
@@ -164,4 +192,5 @@ const adminSlice = createSlice({
   },
 });
 
+export const { clearError } = adminSlice.actions;
 export default adminSlice.reducer;
