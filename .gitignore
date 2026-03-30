@@ -1,0 +1,27 @@
+#logs
+logs
+*.log
+
+#node modules
+grabbit-fe/node_modules
+grabbit-be/node_modules
+
+#build
+grabbit-fe/dist
+grabbit-be/dist
+
+#env
+grabbit-fe/.env
+grabbit-fe/.env.local
+grabbit-fe/.env.development.local
+grabbit-fe/.env.test.local
+grabbit-fe/.env.production.local
+grabbit-be/.env
+grabbit-be/.env.local
+grabbit-be/.env.development.local
+grabbit-be/.env.test.local
+grabbit-be/.env.production.local
+
+#misc
+.DS_Store
+Thumbs.db

@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import "tailwindcss";
+
+#root {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  background-color: var(--color-winterella-off-white);
+  color: var(--color-winterella-black);
+}
+
+.font-oswald {
+  font-family: "Oswald", sans-serif;
+}
+
+/* @theme is a Tailwind CSS v4 directive */
+@theme {
+  --color-winterella-red: #E83B13;
+  --color-winterella-yellow: #FDBB2E;
+  --color-winterella-black: #1A170F;
+  --color-winterella-off-white: #FBF7F4;
+  --color-rabbit-red: #ea2e0e;
+}
+
+/* Custom Scrollbar for Winterella */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #1A170F;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #E83B13;
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #1A170F transparent;
+}
